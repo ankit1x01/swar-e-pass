@@ -334,7 +334,16 @@
       .poster{
         border-left: 0;
         border-radius: 0 0 24px 24px;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+      }
+      .poster .img{
+        flex: 1;
         min-height: 200px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
       }
       .qr-frame{
         width: 180px;
@@ -369,7 +378,13 @@
       .p-swar{ font-size: 14px; }
       .p-safar{ font-size: 32px; }
       .p-jam{ font-size: 13px; }
-      .poster .content{ padding: 16px; }
+      .poster .content{
+        padding: 16px;
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        margin-top: auto;
+      }
     }
 
     @media (max-width: 480px){
@@ -393,7 +408,13 @@
         font-size: 7px;
       }
       .p-safar{ font-size: 28px; }
-      .poster .content{ padding: 12px; }
+      .poster .content{
+        padding: 12px;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+      }
+      .poster{
+        min-height: 220px;
+      }
 
       /* Header adjustments for mobile */
       .w-full.max-w-\[1180px\].space-y-4 h1 {
@@ -415,7 +436,13 @@
       .hl{ font-size: clamp(18px, 3vw, 24px); }
       .stub{ padding: 12px 10px; }
       .center{ padding: 16px 12px; }
-      .poster .content{ padding: 10px; }
+      .poster .content{
+        padding: 10px;
+        background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+      }
+      .poster{
+        min-height: 200px;
+      }
     }
   </style>
 </head>
@@ -512,7 +539,7 @@
 
           <!-- RIGHT -->
           <section class="poster">
-            <div id="posterImg" class="img" style="background-image:url('WhatsApp Image 2025-09-21 at 11.30.44 AM.jpeg')"></div>
+            <div id="posterImg" class="img" style="background-image:url('1.jpeg')"></div>
             <div class="veil"></div>
             <div class="holo" id="holoSeal" data-tier="GENERAL"></div>
             <div class="content">
@@ -627,7 +654,12 @@
       $("#brandCorner").textContent = brand;
       $("#dateNum").textContent = dateStr;
       $("#venueTxt").textContent = venue;
-      if(poster){ $("#posterImg").style.backgroundImage = `url('${poster}')`; }
+      if(poster){
+        $("#posterImg").style.backgroundImage = `url('${poster}')`;
+      } else {
+        // Set default image if no poster parameter
+        $("#posterImg").style.backgroundImage = "url('1.jpeg')";
+      }
       const holo = $("#holoSeal");
       holo.dataset.tier = tier;
       if(tier === "VIP"){ holo.style.setProperty("filter","drop-shadow(0 0 8px rgba(255, 209, 102, .65))"); }
