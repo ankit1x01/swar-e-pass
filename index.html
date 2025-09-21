@@ -599,12 +599,13 @@
     }
 
     // Crystal-clear QR (SVG)
-    function renderQR(text, boxId){
+    function renderQR(qrId, boxId){
       const box = document.getElementById(boxId);
       box.innerHTML = "";
       try{
         const qr = qrcode(0, 'H'); // high error correction
-        qr.addData(text);
+        const verificationUrl = `https://shifoyage-event-verification-system.vercel.app/verify-checkin?qrId=${qrId}`;
+        qr.addData(verificationUrl);
         qr.make();
         const svg = qr.createSvgTag(8, 3, "#000000", "#FFFFFF"); // fat quiet zone
         box.innerHTML = svg;
@@ -641,14 +642,16 @@
         hide("#loading"); show("#notFound"); $("#badId").textContent = "No QR ID in URL"; return;
       }
 
-      // Simulate lookup
+      // Always show the pass with the provided QR ID
       setTimeout(()=>{
-        const user = attendees.find(a => a.qrId.toLowerCase() === qrId.toLowerCase());
         hide("#loading");
-        if(!user){ show("#notFound"); $("#badId").textContent = qrId; return; }
 
-        $("#qrStub").textContent = user.qrId;
-        renderQR(user.qrId, "qrBox");
+        // Display the QR ID from URL parameter
+        $("#qrStub").textContent = qrId;
+
+        // Generate QR code with verification URL
+        renderQR(qrId, "qrBox");
+
         show("#pass");
 
         // Add success animations and effects
