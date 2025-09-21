@@ -10,7 +10,8 @@
   <style>
     :root{
       --magenta:#FF1FB6; --bronze:#AF844B; --charcoal:#0F0F10; --ink:#121212;
-      --vip:#FFD166; --gen:#A0AEC0;
+      --vip:#FFD166; --gen:#A0AEC0; --neon-pink:#FF00FF; --neon-cyan:#00FFFF;
+      --neon-green:#39FF14; --purple:#8A2BE2;
     }
     *{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
 
@@ -20,20 +21,61 @@
         radial-gradient(1200px 600px at 20% 20%, #3b0764 0%, transparent 55%),
         radial-gradient(900px 550px at 80% 80%, #0b132b 0%, transparent 60%),
         linear-gradient(135deg,#0f172a 0%,#1e1b4b 30%,#312e81 60%,#581c87 85%,#7c2d92 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating particles background */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-cyan));
+      animation: float 6s ease-in-out infinite;
+      opacity: 0.1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+      25% { transform: translateY(-20px) translateX(10px) rotate(90deg); }
+      50% { transform: translateY(0px) translateX(-10px) rotate(180deg); }
+      75% { transform: translateY(-10px) translateX(5px) rotate(270deg); }
     }
 
     /* --- PASS --- */
     .pass{
-      width:min(1160px, 100%); aspect-ratio:3/1; position:relative; border-radius:24px; overflow:hidden;
+      width:min(1160px, 100%); aspect-ratio:2.5/1; position:relative; border-radius:24px; overflow:hidden;
       background:linear-gradient(135deg,#1a1a1a 0%,#2b2b2b 50%,#171717 100%);
       box-shadow:
         0 40px 100px rgba(0,0,0,.55),
-        inset 0 0 0 1px rgba(255,255,255,.06);
+        inset 0 0 0 1px rgba(255,255,255,.06),
+        0 0 50px rgba(255,31,182,.3);
       isolation:isolate;
       transform-style:preserve-3d;
-      transition:transform .3s ease;
+      transition:all .5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: passGlow 4s ease-in-out infinite alternate;
     }
-    .pass:hover{ transform:perspective(1200px) rotateX(2deg) rotateY(-2.5deg) }
+    .pass:hover{
+      transform:perspective(1200px) rotateX(2deg) rotateY(-2.5deg) scale(1.02);
+      box-shadow:
+        0 50px 120px rgba(0,0,0,.65),
+        inset 0 0 0 1px rgba(255,255,255,.12),
+        0 0 80px rgba(255,31,182,.5);
+    }
+
+    @keyframes passGlow {
+      0% { box-shadow: 0 40px 100px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 30px rgba(255,31,182,.2); }
+      100% { box-shadow: 0 40px 100px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.06), 0 0 60px rgba(255,31,182,.4); }
+    }
 
     /* Animated aurora + noise */
     .pass::before{
@@ -69,30 +111,45 @@
 
     /* LEFT STUB */
     .stub{
-      position:relative; padding:22px 18px; border-right:3px dashed rgba(255,255,255,.48);
+      position:relative; padding:25px 18px; border-right:3px dashed rgba(255,255,255,.48);
       background:linear-gradient(145deg,var(--bronze) 0%, #87611c 48%, #232323 100%);
       box-shadow: inset -10px 0 20px rgba(0,0,0,.35);
       display:flex; flex-direction:column; justify-content:space-between; border-radius:24px 0 0 24px;
+      min-height: 100%;
     }
     .stub .vertical{
       writing-mode:vertical-rl; text-orientation:mixed; letter-spacing:1px;
       font:700 10px/1 Inter; color:rgba(255,255,255,.95); text-shadow:0 1px 0 rgba(0,0,0,.4);
     }
-    .qr-wrap{display:flex; flex-direction:column; align-items:center; gap:12px}
+    .qr-wrap{display:flex; flex-direction:column; align-items:center; gap:10px; flex: 1; justify-content: center;}
     .qr-label{ font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:11px; letter-spacing:.9px; color:#fff; text-transform:uppercase }
     .qr-frame{
-      width:186px; height:186px; display:grid; place-items:center; border-radius:16px;
-      background:#fff; outline:4px solid #202022; box-shadow:0 12px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.06) inset;
+      width:200px; height:200px; display:grid; place-items:center; border-radius:16px;
+      background:#fff; outline:4px solid #202022;
+      box-shadow:0 12px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.06) inset, 0 0 20px rgba(255,31,182,.3);
+      transition: all .3s ease;
+      animation: qrPulse 3s ease-in-out infinite;
+      margin: 0 auto;
     }
-    .qr-frame svg{ width:172px; height:172px; shape-rendering:crispEdges; image-rendering:pixelated; border-radius:10px }
+    .qr-frame:hover {
+      transform: scale(1.05);
+      box-shadow:0 15px 35px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.12) inset, 0 0 30px rgba(255,31,182,.5);
+    }
+
+    @keyframes qrPulse {
+      0%, 100% { box-shadow:0 12px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.06) inset, 0 0 15px rgba(255,31,182,.2); }
+      50% { box-shadow:0 12px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.06) inset, 0 0 25px rgba(255,31,182,.4); }
+    }
+    .qr-frame svg{ width:185px; height:185px; shape-rendering:crispEdges; image-rendering:pixelated; border-radius:10px }
     .ticket-meta{ text-align:center; color:rgba(255,255,255,.95); font-family:"IBM Plex Mono",monospace; font-size:11px }
     .ticket-meta .muted{ opacity:.75; font-size:10px }
     .stub-msg{ font-size:10px; color:rgba(255,255,255,.9); text-align:center; line-height:1.35 }
 
     /* CENTER PANEL with Guilloché security pattern */
     .center{
-      position:relative; padding:30px 36px; background:linear-gradient(135deg,#2a2a2a,#1a1a1a 50%,#272727);
-      border-inline:1px solid rgba(255,255,255,.12); display:flex; flex-direction:column; justify-content:center;
+      position:relative; padding:35px 30px; background:linear-gradient(135deg,#2a2a2a,#1a1a1a 50%,#272727);
+      border-inline:1px solid rgba(255,255,255,.12); display:flex; flex-direction:column; justify-content:space-between;
+      min-height: 100%;
     }
     .center::before{
       content:"ENTRY PASS"; position:absolute; top:12px; right:16px; z-index:2;
@@ -108,15 +165,34 @@
       </g></svg>') center/cover no-repeat;
     }
     .brandline{ display:flex; justify-content:space-between; color:#fff; letter-spacing:.8px; text-transform:uppercase; font-weight:800; font-size:12px; z-index:1 }
-    .headline{ text-align:center; letter-spacing:3px; line-height:.86; margin:12px 0 10px; z-index:1 }
-    .hl{ font-family:"Bebas Neue"; font-size:clamp(38px, 6.2vw, 58px) }
-    .hl.solid{ color:var(--magenta); text-shadow:0 0 18px color-mix(in oklab, var(--magenta) 60%, transparent), 2px 2px 4px rgba(0,0,0,.85) }
-    .hl.outline{ color:transparent; -webkit-text-stroke:3px var(--magenta); text-shadow:0 0 14px color-mix(in oklab, var(--magenta) 45%, transparent) }
-    .sub{ color:rgba(255,255,255,.88); font-size:12px; margin-bottom:10px; z-index:1 }
+    .headline{ text-align:center; letter-spacing:1px; line-height:.86; margin:12px 0 10px; z-index:1; display: flex; justify-content: center; align-items: center; gap: 2px; flex-wrap: wrap; }
+    .hl{ font-family:"Bebas Neue"; font-size:clamp(32px, 5.2vw, 48px); display: inline-block; }
+    .hl.solid{
+      color:var(--magenta);
+      text-shadow:0 0 18px color-mix(in oklab, var(--magenta) 60%, transparent), 2px 2px 4px rgba(0,0,0,.85);
+      animation: textGlow 2s ease-in-out infinite alternate;
+    }
+    .hl.outline{
+      color:transparent;
+      -webkit-text-stroke:3px var(--magenta);
+      text-shadow:0 0 14px color-mix(in oklab, var(--magenta) 45%, transparent);
+      animation: outlineShimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes textGlow {
+      0% { text-shadow:0 0 18px color-mix(in oklab, var(--magenta) 60%, transparent), 2px 2px 4px rgba(0,0,0,.85); }
+      100% { text-shadow:0 0 30px color-mix(in oklab, var(--magenta) 80%, transparent), 2px 2px 4px rgba(0,0,0,.85); }
+    }
+
+    @keyframes outlineShimmer {
+      0%, 100% { -webkit-text-stroke:3px var(--magenta); text-shadow:0 0 14px color-mix(in oklab, var(--magenta) 45%, transparent); }
+      50% { -webkit-text-stroke:3px var(--neon-cyan); text-shadow:0 0 20px color-mix(in oklab, var(--neon-cyan) 60%, transparent); }
+    }
+    .sub{ color:rgba(255,255,255,.88); font-size:12px; margin-bottom:12px; z-index:1 }
     .kvs{ color:#fff; z-index:1 }
     .day{ font-size:11px; letter-spacing:1px; text-transform:uppercase; opacity:.85 }
-    .dnum{ font-size:20px; font-weight:900; margin:2px 0 4px }
-    .venue{ display:flex; align-items:center; gap:6px; font-size:12px }
+    .dnum{ font-size:24px; font-weight:900; margin:4px 0 8px; line-height: 1.2; }
+    .venue{ display:flex; align-items:center; gap:6px; font-size:12px; margin-top: 8px; }
     .pin{ width:14px; height:14px; opacity:.8 }
 
     /* RIGHT POSTER + HOLOGRAM SEAL */
@@ -141,10 +217,20 @@
       border-radius:50%;
       background:
         conic-gradient(from 0deg, #ff93d6, #ffe27a, #97f7ff, #b9a5ff, #ff93d6);
-      box-shadow:0 8px 20px rgba(0,0,0,.35), inset 0 0 12px rgba(255,255,255,.35);
-      animation:spin 6s linear infinite;
+      box-shadow:0 8px 20px rgba(0,0,0,.35), inset 0 0 12px rgba(255,255,255,.35), 0 0 25px rgba(255,31,182,.6);
+      animation:spin 6s linear infinite, holoPulse 2s ease-in-out infinite;
       display:grid; place-items:center; color:#111; font:900 10px/1 Inter; text-transform:uppercase;
       -webkit-mask:radial-gradient(circle at 50% 50%, #000 58%, transparent 60%);
+      transition: transform .3s ease;
+    }
+    .holo:hover {
+      transform: scale(1.1);
+      animation-duration: 3s, 1s;
+    }
+
+    @keyframes holoPulse {
+      0%, 100% { box-shadow:0 8px 20px rgba(0,0,0,.35), inset 0 0 12px rgba(255,255,255,.35), 0 0 20px rgba(255,31,182,.4); }
+      50% { box-shadow:0 10px 25px rgba(0,0,0,.45), inset 0 0 15px rgba(255,255,255,.45), 0 0 35px rgba(255,31,182,.8); }
     }
     .holo::after{
       content:attr(data-tier);
@@ -152,6 +238,62 @@
       background:rgba(255,255,255,.9); letter-spacing:.8px;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Confetti animation */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #f0f;
+      animation: confetti-fall 3s linear infinite;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Success animation for pass */
+    .pass.verified {
+      animation: passGlow 4s ease-in-out infinite alternate, successPulse 0.6s ease-out;
+    }
+
+    @keyframes successPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Toast animations */
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
 
     /* PRINT */
     @media print{
@@ -169,26 +311,57 @@
       .stub{ border-right:0; border-bottom:3px dashed rgba(255,255,255,.48); border-radius:24px 24px 0 0 }
       .center{ border-inline:0 }
       .poster{ border-left:0; border-radius:0 0 24px 24px }
-      .qr-frame{ width:230px; height:230px }
-      .qr-frame svg{ width:216px; height:216px }
+      .qr-frame{ width:240px; height:240px; margin: 0 auto; }
+      .qr-frame svg{ width:225px; height:225px }
+      .qr-wrap{ align-items: center; }
+      .headline{ gap: 1px; }
+      .hl{ font-size:clamp(28px, 4.5vw, 40px); }
     }
   </style>
 </head>
 <body>
+  <!-- Floating particles -->
+  <div class="particles">
+    <div class="particle" style="width: 4px; height: 4px; top: 20%; left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 6px; height: 6px; top: 60%; left: 80%; animation-delay: 2s;"></div>
+    <div class="particle" style="width: 3px; height: 3px; top: 40%; left: 90%; animation-delay: 4s;"></div>
+    <div class="particle" style="width: 5px; height: 5px; top: 80%; left: 20%; animation-delay: 1s;"></div>
+    <div class="particle" style="width: 4px; height: 4px; top: 10%; left: 70%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 7px; height: 7px; top: 70%; left: 50%; animation-delay: 5s;"></div>
+  </div>
+
   <div class="w-full max-w-[1180px] space-y-4">
     <div class="flex items-center justify-between noprint">
-      <h1 class="text-white/90 font-semibold">Attendee Verification</h1>
-      <div class="space-x-2">
-        <button id="shareBtn" class="px-3 py-2 rounded bg-white/10 text-white hover:bg-white/20">Share</button>
-        <button id="printBtn" class="px-3 py-2 rounded bg-white/10 text-white hover:bg-white/20">Print Pass</button>
+      <h1 class="text-white/90 font-semibold text-xl">🎫 Attendee Verification</h1>
+      <div class="space-x-3">
+        <button id="shareBtn" class="group px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-white hover:from-pink-500/30 hover:to-purple-500/30 border border-pink-500/30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/25">
+          <span class="flex items-center gap-2">
+            📤 <span class="group-hover:animate-pulse">Share</span>
+          </span>
+        </button>
+        <button id="printBtn" class="group px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25">
+          <span class="flex items-center gap-2">
+            🖨️ <span class="group-hover:animate-pulse">Print Pass</span>
+          </span>
+        </button>
       </div>
     </div>
 
     <!-- states -->
-    <div id="loading" class="text-center text-white/80 noprint">Verifying your details…</div>
+    <div id="loading" class="text-center text-white/80 noprint">
+      <div class="flex items-center justify-center gap-3">
+        <div class="animate-spin text-2xl">🔍</div>
+        <div class="text-lg animate-pulse">Verifying your magical pass details…</div>
+      </div>
+      <div class="mt-2 text-sm text-white/60 animate-bounce">✨ Please wait while we work our magic ✨</div>
+    </div>
     <div id="notFound" class="hidden text-center noprint">
-      <div class="text-white text-xl font-semibold mb-1">Pass Not Found</div>
-      <div class="text-pink-200">QR ID: <span id="badId" class="font-mono"></span></div>
+      <div class="bg-gradient-to-br from-red-500/20 to-pink-500/20 border border-red-500/30 rounded-xl p-6 backdrop-blur-sm">
+        <div class="text-4xl mb-3 animate-bounce">🚫</div>
+        <div class="text-white text-xl font-semibold mb-2">Oops! Pass Not Found</div>
+        <div class="text-pink-200 mb-3">QR ID: <span id="badId" class="font-mono bg-black/30 px-2 py-1 rounded"></span></div>
+        <div class="text-sm text-white/70">🎭 This pass seems to have vanished into thin air!</div>
+      </div>
     </div>
 
     <!-- PASS -->
@@ -199,17 +372,17 @@
         <div class="grid3">
           <!-- LEFT -->
           <aside class="stub">
-            <div class="vertical">OPEN SITTING ARRANGEMENT</div>
+            <div class="vertical">✨ OPEN SITTING ARRANGEMENT ✨</div>
             <div class="qr-wrap">
-              <div class="qr-label">SCAN TO CHECK-IN</div>
+              <div class="qr-label">🔮 CHECK-IN AFTER ENTERING THE VENUE 🔮</div>
               <div class="qr-frame"><div id="qrBox"></div></div>
               <div class="ticket-meta">
-                <div class="muted">TICKET ID</div>
+                <div class="muted">🎫 TICKET ID</div>
                 <div id="qrStub" class="font-mono font-semibold"></div>
-                <div class="muted">shifoyage</div>
+                <div class="muted">🎭 shifoyage</div>
               </div>
             </div>
-            <div class="stub-msg">Please come with an open heart and spirit of togetherness to truly experience the event.</div>
+            <div class="stub-msg">💖 Please come with an open heart and a spirit of togetherness — that's all you need to truly experience the event. 🌟</div>
           </aside>
 
           <!-- CENTER -->
@@ -217,24 +390,29 @@
             <div class="guilloche"></div>
             <div class="brandline"><span id="brandTop">Shifoyage</span><span>Presents</span></div>
             <div class="headline">
-              <div class="hl solid">SWAR-E-SAFAR</div>
-              <div class="hl outline">SWAR-E-SAFAR</div>
-              <div class="hl solid">SWAR-E-SAFAR</div>
+              <div class="hl solid">s</div>
+              <div class="hl outline">h i f</div>
+              <div class="hl solid">o</div>
+              <div class="hl outline">y</div>
+              <div class="hl solid">a</div>
+              <div class="hl outline">g</div>
+              <div class="hl solid">e</div>
             </div>
+            <div class="sub" style="color: rgba(255,255,255,.95); font-size: 14px; margin: 8px 0;">With special performances</div>
             <div class="sub" id="attendeeName" style="display:none"></div>
             <div class="kvs">
               <div class="day">SUNDAY</div>
               <div id="dateNum" class="dnum">21.09.2025</div>
               <div class="venue">
                 <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
-                <span id="venueTxt">Chai Kaapi, E3 Arera Colony, Bhopal</span>
+                <span id="venueTxt">Chai Kaapi, E 3 Arera Colony, Bhopal</span>
               </div>
             </div>
           </main>
 
           <!-- RIGHT -->
           <section class="poster">
-            <div id="posterImg" class="img" style="background-image:none"></div>
+            <div id="posterImg" class="img" style="background-image:url('WhatsApp Image 2025-09-21 at 11.30.44 AM.jpeg')"></div>
             <div class="veil"></div>
             <div class="holo" id="holoSeal" data-tier="GENERAL"></div>
             <div class="content">
@@ -275,6 +453,51 @@
     function show(id){ $(id).classList.remove("hidden"); }
     function hide(id){ $(id).classList.add("hidden"); }
 
+    // Confetti animation
+    function createConfetti() {
+      const colors = ['#FF1FB6', '#00FFFF', '#39FF14', '#FFD166', '#FF6B6B', '#4ECDC4'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 3 + 's';
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+          confetti.remove();
+        }, 5000);
+      }
+    }
+
+    // Playful success message
+    function showSuccessMessage() {
+      const messages = [
+        '🎉 Woohoo! Your pass is verified!',
+        '✨ Magic detected! Welcome aboard!',
+        '🎭 Your ticket to wonderland is ready!',
+        '🌟 Pass verified! Let the show begin!',
+        '🎪 Step right up! Your entry is confirmed!'
+      ];
+      const message = messages[Math.floor(Math.random() * messages.length)];
+
+      const toast = document.createElement('div');
+      toast.innerHTML = `
+        <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(45deg, #FF1FB6, #00FFFF);
+                    color: white; padding: 15px 20px; border-radius: 10px; z-index: 9999;
+                    animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+                    box-shadow: 0 10px 25px rgba(255,31,182,0.3);">
+          ${message}
+        </div>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
     // Crystal-clear QR (SVG)
     function renderQR(text, boxId){
       const box = document.getElementById(boxId);
@@ -283,7 +506,7 @@
         const qr = qrcode(0, 'H'); // high error correction
         qr.addData(text);
         qr.make();
-        const svg = qr.createSvgTag(9, 4, "#000000", "#FFFFFF"); // fat quiet zone
+        const svg = qr.createSvgTag(8, 3, "#000000", "#FFFFFF"); // fat quiet zone
         box.innerHTML = svg;
         const el = box.querySelector("svg");
         if(el){
@@ -294,7 +517,7 @@
           el.style.borderRadius = "10px";
         }
       }catch(err){
-        box.innerHTML = '<div style="width:172px;height:172px;background:#fff;border:2px solid #ccc;display:grid;place-items:center;font:12px/1 Inter;color:#666">QR Error</div>';
+        box.innerHTML = '<div style="width:185px;height:185px;background:#fff;border:2px solid #ccc;display:grid;place-items:center;font:12px/1 Inter;color:#666">QR Error</div>';
       }
     }
 
@@ -327,21 +550,76 @@
         $("#qrStub").textContent = user.qrId;
         renderQR(user.qrId, "qrBox");
         show("#pass");
-      }, 400);
+
+        // Add success animations and effects
+        setTimeout(() => {
+          $("#card").classList.add("verified");
+          createConfetti();
+          showSuccessMessage();
+        }, 500);
+      }, 800);
     }
 
-    // Share pass link
+    // Share pass link with playful feedback
     document.getElementById("shareBtn").addEventListener("click", async ()=>{
+      const btn = document.getElementById("shareBtn");
+      const originalText = btn.innerHTML;
+
+      btn.innerHTML = '<span class="flex items-center gap-2">🚀 <span class="animate-pulse">Sharing...</span></span>';
+      btn.disabled = true;
+
       const url = location.href;
       if(navigator.share){
-        try{ await navigator.share({ title:"Your Entry Pass", text:"Here is your pass link", url }); }catch{}
+        try{
+          await navigator.share({
+            title:"🎭 Your Magical Entry Pass",
+            text:"✨ Here's your exclusive pass to Swar-e-Safar! 🎵",
+            url
+          });
+          btn.innerHTML = '<span class="flex items-center gap-2">✅ <span>Shared!</span></span>';
+        }catch{
+          btn.innerHTML = originalText;
+        }
       }else{
         await navigator.clipboard.writeText(url);
-        alert("Link copied!");
+        btn.innerHTML = '<span class="flex items-center gap-2">📋 <span>Copied!</span></span>';
+
+        // Create a mini celebration
+        const colors = ['#FF1FB6', '#00FFFF', '#39FF14'];
+        for(let i = 0; i < 10; i++) {
+          const spark = document.createElement('div');
+          spark.innerHTML = '✨';
+          spark.style.position = 'fixed';
+          spark.style.left = btn.offsetLeft + Math.random() * btn.offsetWidth + 'px';
+          spark.style.top = btn.offsetTop + Math.random() * btn.offsetHeight + 'px';
+          spark.style.color = colors[Math.floor(Math.random() * colors.length)];
+          spark.style.fontSize = '20px';
+          spark.style.pointerEvents = 'none';
+          spark.style.zIndex = '9999';
+          spark.style.animation = 'float 1s ease-out forwards';
+          document.body.appendChild(spark);
+
+          setTimeout(() => spark.remove(), 1000);
+        }
       }
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }, 2000);
     });
 
-    document.getElementById("printBtn").addEventListener("click", ()=>window.print());
+    document.getElementById("printBtn").addEventListener("click", ()=>{
+      const btn = document.getElementById("printBtn");
+      const originalText = btn.innerHTML;
+
+      btn.innerHTML = '<span class="flex items-center gap-2">🖨️ <span class="animate-pulse">Preparing print...</span></span>';
+
+      setTimeout(() => {
+        window.print();
+        btn.innerHTML = originalText;
+      }, 500);
+    });
     document.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
